@@ -7,7 +7,7 @@ import re
 class Markov():
     def __init__(self):
         self.END_CHARS = ['.','!','?']
-        self.NO_SPACE_CHARS = [',','.','!','?',':',';']
+#       self.NO_SPACE_CHARS = [',','.','!','?',':',';']  Used when prototyping with Python NLTK
 
         self.word_dict = {}
         self.starting_words = []
@@ -15,23 +15,22 @@ class Markov():
     def build_dictionary(self):
         with open('bible','r') as bible:
             for line in bible:
-                if line[:3]=='<p>':
-                    #Eliminiates html tags as well as verse numbers
-                    words = re.sub('<.*?>|[0-9]+:[0-9]+','',line).split()
-                    previous_word = None
-                    for word in words:
-                        if word not in self.word_dict:
-                            self.dict_update(str(word))
+                #Eliminiates html tags as well as verse numbers
+                words = re.sub('<.*?>|[0-9]+:[0-9]+','',line).split()
+                previous_word = None
+                for word in words:
+                    if word not in self.word_dict:
+                        self.dict_update(str(word))
 
-                        if previous_word is not None:
-                            self.add_to_follow_set(previous_word, word)
-                        else:
-                            self.starting_words.append(word)
+                    if previous_word is not None:
+                        self.add_to_follow_set(previous_word, word)
+                    else:
+                        self.starting_words.append(word)
 
-                        if word[-1] in self.END_CHARS:
-                            previous_word = None
-                        else:
-                            previous_word = word
+                    if word[-1] in self.END_CHARS:
+                        previous_word = None
+                    else:
+                        previous_word = word
 
     def dict_update(self, word):
         self.word_dict.update({word:[]})
